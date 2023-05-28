@@ -15,7 +15,7 @@ robot4 = SSL_DetectionRobot()
 ball = SSL_DetectionBall()
 
 def vision_callback(data):
-    global robot4,robot1,robot2,robot3,robot4, ball
+    global robot0,robot1,robot2,robot3,robot4, ball
     for i in range(0,len(data.robots_blue)):
         if(data.robots_blue[i].robot_id == 0):
             robot0 = data.robots_blue[i]
