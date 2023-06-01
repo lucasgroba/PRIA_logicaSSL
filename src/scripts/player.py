@@ -3,9 +3,6 @@
 
 class Player:
 
-
-
-
     def __init__(self,team,id):
         self.team = team
         self.position = {'x':0, 'y':0}

@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-
+from behivours.go_to_the_ball import GoToTheball
+from behivours.stay_in_field import StayInField
+from behivours.stop_all_action import StopAllAction
+from behivours.pass_the_ball import PassTheball
+from subsumption.arbitrator import Arbitrator
 import rospy
 from geometry_msgs.msg import Twist
 from grsim_ros_bridge_msgs.msg import SSL
@@ -11,13 +15,18 @@ import player
 dist = lambda a,b: math.sqrt((a['x']-b['x'])**2+(a['y']-b['y'])**2)
 pend = lambda a,b: math.atan2((a['y']-b['y']),(a['x']-b['x']))
 
+
+
 player0 = player.Player('blue','0')
 player1 = player.Player('blue','1')
 player2 = player.Player('blue','2')
 player3 = player.Player('blue','3')
 player4 = player.Player('blue','4')
 # instancio los jugadores de mi equipo
-
+behabe = GoToTheball(player0) 
+behabe.action()
+behabe.surpress()
+behabe.takeControl()
 
 ball_position = {'x':0, 'y':0}
 #instancio la posicion de la pelota
@@ -25,6 +34,15 @@ ball_position = {'x':0, 'y':0}
 player_my_team = [player0,player1,player2,player3,player4]
 #agregi mis jugadores a un array
 
+b1=StopAllAction(player1)
+b2=StayInField(player1)
+b3=GoToTheball(player1)
+b4=PassTheball(player1)
+
+
+bArray = (b4,b3,b2,b1)
+arby = Arbitrator(bArray,True)
+arby.start()
 
 
 
@@ -51,9 +69,6 @@ def vision_callback(data):
                 if item.robot_id == 4:
                     player4.setPosition(item.x,item.y)
                     player4.setAngle(item.orientation)
-                    
-                
-
                     
             except:
                 pass
