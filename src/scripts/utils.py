@@ -3,7 +3,9 @@
 from math import sqrt, asin, atan2
 import numpy as np
 
+
 dist = lambda a,b: sqrt((a['x']-b['x'])**2+(a['y']-b['y'])**2)
+pend = lambda a,b: atan2((a['y']-b['y']),(a['x']-b['x']))
 
 def get_closer_player(all_players, our_player, isRival = False):
 # retorna cual es el jugador mas cercano a nuestro player
@@ -27,6 +29,7 @@ def get_closer_player(all_players, our_player, isRival = False):
 
 
 def calculate_distance_matrix(data):
+    #calculo matris de distancias
     n = len(data)
     dist_matrix = np.zeros((n,n))
     for i in range(n):
@@ -37,7 +40,7 @@ def calculate_distance_matrix(data):
     return dist_matrix
 
 def ball_player_min_distance(our_players, ball_position):
-
+#retorno mi jugador mas cercano a la pelota
     n = len(our_players)
     distances = []
     for i in range(n):
@@ -47,7 +50,7 @@ def ball_player_min_distance(our_players, ball_position):
     return [np_distances.argmin(), np_distances.min()]
 
 def they_have_the_ball(all_players, ball_position, gap_player_ball):
-
+# retorna si el equipo rival tiene la pelota
     n = len(all_players)
     distances = []
     for i in range(n):
@@ -67,26 +70,30 @@ def they_have_the_ball(all_players, ball_position, gap_player_ball):
 
 
 def get_angle_player_object(player_position, object_position, initial_angle):
-
-    angle = atan2(object_position['y']-player_position['y'], object_position['x']-player_position['x'])
+## retorna diferencia angular entre un jugador y un objeto
+    angle = pend(player_position, object_position)
 
     return angle - initial_angle
 
 def get_distance_player_object(player_position, object_position):
+    ## retorna distancia entre un jugador y un objeto
     return dist(player_position, object_position)
 
 def get_active_player(players, ball_position):
+    #soy el jugador mas cercano
 
     our_players_positions = [item.get_position() for item in players]
     index_player, distance_player_ball = ball_player_min_distance(our_players_positions, ball_position)
 
     closer_player = players[index_player]
 
-    if closer_player.ball_is_in_area(ball_position):
+    return [closer_player, distance_player_ball]
+
+    #if closer_player.ball_is_in_area(ball_position):
         # si la pelota esta en Area del player mas cercano, se activa
-        return [closer_player, distance_player_ball]
-    else:
+        #return [closer_player, distance_player_ball]
+    #else:
         # sino, sigo con el siguiente jugador mas cercano
-        del players[index_player]
-        return get_active_player(players, ball_position)
+        #del players[index_player]
+        #return get_active_player(players, ball_position)
     
