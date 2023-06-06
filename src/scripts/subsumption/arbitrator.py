@@ -21,7 +21,7 @@ class Arbitrator:
             time.sleep(0.25)
 
         while True:
-            with self.monitor.lock:
+            with threading.Lock():
                 if self._highestPriority > self._minusOne:
                     self._active = self._highestPriority
                 else:
@@ -30,16 +30,17 @@ class Arbitrator:
                         return
             if self._active != self._minusOne:
                 self._behavior[self._active].action()
+                print( "action finished", "active: ", self._active ," next: ",self._highestPriority)
                 self._active = self._minusOne
 
-            time.sleep(0.25)
+            self.monitor.join()
 
     def stop(self):
         self.keepRunning = False
     class Monitor(Thread):
 
         def __init__(self, arby):
-            super().__init__()
+            Thread.__init__(self)
             self.more = True
             self.arby = arby
             self.maxPriority = len(arby._behavior) - 1
@@ -65,5 +66,5 @@ class Arbitrator:
                     self.arby._behavior[active].suppress()
 
             # end synchronize block - main thread can run now
-            time.sleep(0)
+            time.sleep(0.25)
 

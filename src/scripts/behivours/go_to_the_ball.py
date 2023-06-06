@@ -12,28 +12,27 @@ class GoToTheball(Behavior):
 
     def __init__(self, player, ball_position):
         super().__init__()
-        self.surpressed = False
+        self.suppressed = False
         self.player = player
         self.ball_position = ball_position
 
     def action(self):
-        self.surpressed = False
-        print('action GoToTheball--')
-
+        self.suppressed = False
         r = rospy.Rate(10)
         msg = SSL()
 
-        while not (rospy.is_shutdown() or self.surpressed):
+        i = 0
+        while not (rospy.is_shutdown() or self.suppressed):
 
             goal_angle = pend(self.ball_position, self.player.getPosition())
             heading = abs(goal_angle - self.player.getAngle())
             distance = dist(self.ball_position, self.player.getPosition())
 
-            if (distance < 0.2):
+            if distance < 0.2:
                 msg.cmd_vel.linear.x = 0
                 msg.cmd_vel.angular.z = 0
             else:
-                if (heading < 0.2):
+                if heading < 0.2:
                     msg.cmd_vel.linear.x = 0.5
                     msg.cmd_vel.angular.z = 0
                 else:
@@ -41,12 +40,14 @@ class GoToTheball(Behavior):
                     msg.cmd_vel.angular.z = 1
             # print(heading, distance)
             self.player.getPublisher().publish(msg)
-            print('takeControl goToTheBall'+str(self.player.getPosition()['x'] >2000))
+            i += 1
+            if i % 5000 == 0:
+                print('takedControl goToTheBall :'+str(self.player.getPosition()['x'] ),msg.cmd_vel.angular.z)
 
-    def surpress(self):
-        print('surpress come')
-        self.surpressed = True
+    def suppress(self):
+        print('surpress goToTheBall come')
+        self.suppressed = True
 
     def takeControl(self):
-        print('takeControl goToTheBall'+str(self.player.getPosition()['x'] >2000))
+        # print('takeControl goToTheBall'+str(self.player.getPosition()['x'] >2000))
         return True  # condicion para ejecutar el go to the ball
