@@ -9,7 +9,8 @@ import utils
 import player
 import time 
 
-
+#Constantes
+POSITION_GOAL = {'x':2, 'y':0}
 
 
 #Funciones lambda para facilitar la lectura del codigo
@@ -42,6 +43,8 @@ player_rival_team = [rival0,rival1,rival2,rival3,rival4]
 #agrego mis rivales en un array 
 
 all_players = player_my_team + player_rival_team
+
+
 
 
 def vision_callback(data):
@@ -113,6 +116,41 @@ def go_to_ball(player):
     ret = True
     while ret :
 
+        goal_angle = pend(POSITION_GOAL,player.getPosition())
+        heading = abs(goal_angle - player.getAngle())
+        distance = dist(POSITION_GOAL,player.getPosition())
+
+        if(distance < 105 and distance != 0.0):
+            msg.cmd_vel.linear.x = 0
+            msg.cmd_vel.angular.z = 0
+            ret = False
+            
+        else:
+            if(heading < 0.2):
+                msg.cmd_vel.linear.x = 0.25
+                msg.cmd_vel.angular.z = 0
+            else:
+                msg.cmd_vel.linear.x = 0
+                msg.cmd_vel.angular.z = 0.25
+        print(player.getPosition())
+        print(heading, distance)
+        player.getPublisher().publish(msg)
+
+
+
+def go_to_goal(player):
+
+    player.setPublisher(rospy.Publisher("/robot_blue_"+player.getId()+"/cmd", SSL,queue_size=10))
+
+
+    r = rospy.Rate(10)
+
+    
+    
+    msg = SSL()
+    ret = True
+    while ret :
+
         goal_angle = pend(ball_position,player.getPosition())
         heading = abs(goal_angle - player.getAngle())
         distance = dist(ball_position,player.getPosition())
@@ -148,30 +186,31 @@ def search_to_pass(self):
 if __name__=="__main__":
     rospy.init_node("grsim_pria",anonymous = False)
     rospy.Subscriber("/vision",SSL_DetectionFrame,vision_callback)
-    go_to_ball(player1)
-    player1.dribbler_on()
-    time.sleep(1.5)
-    player1.dribbler_off()
-    player1.kicker()
-
-
-
+    # go_to_ball(player1)
+    # player1.dribbler_on()
+    # time.sleep(1.5)
+    # player1.dribbler_off()
+    # player1.kicker()
     #go_to_ball(player1)
+    run  = True
 
-    
-    #comienza la logica de Juego
-    # if utils.they_have_the_ball(all_players,ball_position,0.04):
-    #     ##Si mi equipo tiene la pelota 
-    #     player_near, distance_to_ball = utils.get_active_player(player_my_team,ball_position)
-    #     ##obtengo el jugador activo o mas cercano 
-    #     if player_near.getId() == PLAYER_ID:
-    #         #Si el jugador con la pelota es mi jugador
-    #         if utils.they_have_the_ball(player_my_team,POSITION_GOAL,0.9):
-    #             #Si tengo un jugador en mejor posicion tengo que dar el pase 
-    #             ## Implementar funcion de pase
-    #             pass
-    #         else:
-    #             go_to_goal(player3)
+    while run:
+        #comienza la logica de Juego
+        if utils.they_have_the_ball(all_players,ball_position,0.04):
+            ##Si mi equipo tiene la pelota 
+            player_near, distance_to_ball = utils.get_active_player(player_my_team,ball_position)
+            ##obtengo el jugador activo o mas cercano 
+            go_to_goal(player_near)
+
+
+
+            
+                if utils.they_have_the_ball(player_my_team,POSITION_GOAL,0.9):
+                    #Si tengo un jugador en mejor posicion tengo que dar el pase 
+                    ## Implementar funcion de pase
+                    pass
+                else:
+                    go_to_goal(player3)
                 
 
 

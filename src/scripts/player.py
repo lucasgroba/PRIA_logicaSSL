@@ -9,8 +9,7 @@ import utils
 #Funciones lambda para facilitar la lectura del codigo
 dist = lambda a,b: math.sqrt((a['x']-b['x'])**2+(a['y']-b['y'])**2)
 pend = lambda a,b: math.atan2((a['y']-b['y']),(a['x']-b['x']))
-#Constantes
-POSITION_GOAL = {'x':2, 'y':0}
+
 
 class Player:
 
