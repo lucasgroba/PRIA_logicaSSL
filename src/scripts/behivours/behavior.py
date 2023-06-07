@@ -9,7 +9,7 @@ class Behavior(ABC):
         pass
         
     @abstractmethod
-    def surpress(self):
+    def suppress(self):
         pass
     
     @abstractmethod

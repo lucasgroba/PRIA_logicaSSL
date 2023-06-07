@@ -1,16 +1,16 @@
-from behivours.behavior import Behavior
+from subsumption.arbitratorV2 import Behavior
 from grsim_ros_bridge_msgs.msg import SSL
 import rospy
 
-class PassTheball(Behavior):
+class PassTheballV2(Behavior):
 
     def __init__(self,player):
         super().__init__()
-        self.surpressed=True
+        self.suppressed=True
         self.player=player
         
     def action(self):
-        self.surpressed=False
+        self.suppressed=False
         print('action pass the ball')
         self.player.setPublisher(rospy.Publisher("/robot_blue_"+self.player.getId()+"/cmd", SSL,queue_size=10))
         
@@ -25,10 +25,10 @@ class PassTheball(Behavior):
             msg.kicker=True
             self.player.getPublisher().publish(msg)
         
-    def surpress(self):
-        print('surpress pass the ball')
-        self.surpressed=True
+    def suppress(self):
+        print('suppress pass the ball')
+        self.suppressed=True
 
-    def takeControl(self):
-        print('takeControl passTheball')
+    def check(self):
+        print('check passTheball')
         return True #condicion para ejecutar el go to the ball
