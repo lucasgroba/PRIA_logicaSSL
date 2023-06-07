@@ -18,7 +18,12 @@ import utils
 import player
 import time
 import sys
+import time
 
+#Constantes
+POSITION_GOAL = {'x':2, 'y':0}
+
+#Funciones lambda para facilitar la lectura del codigo
 dist = lambda a, b: math.sqrt((a['x'] - b['x']) ** 2 + (a['y'] - b['y']) ** 2)
 pend = lambda a, b: math.atan2((a['y'] - b['y']), (a['x'] - b['x']))
 
@@ -31,32 +36,34 @@ player4 = player.Player('blue', '4')
 
 subsumption_controller = Controller(False)
 
+rival0 = player.Player('yellow', '0')
+rival1 = player.Player('yellow', '1')
+rival2 = player.Player('yellow', '2')
+rival3 = player.Player('yellow', '3')
+rival4 = player.Player('yellow', '4')
+#instancio mis rivales
 ball_position = {'x': 0, 'y': 0}
 # instancio la posicion de la pelota
 
 player_my_team = [player0, player1, player2, player3, player4]
+#agregue mis jugadores a un array
+
+player_rival_team = [rival0,rival1,rival2,rival3,rival4]
+#agrego mis rivales en un array
+
+all_players = player_my_team + player_rival_team
 
 
-# agregi mis jugadores a un array
-
-# b1=StopAllAction(player1)
-# b2=StayInField(player1)
-# b3=GoToTheball(player1)
-# b4=PassTheball(player1)
-#
-#
-# bArray = (b4,b3,b2,b1)
-# arby = Arbitrator(bArray,True)
-# arby.start()
 
 
 def vision_callback(data):
-    global player0, player1, player2, player3, player4, ball_position
+    global player0, player1, player2, player3, player4, ball_position,\
+        rival0, rival1, rival2, rival3, rival4
     if len(data.robots_blue) > 0:
         for item in data.robots_blue:
-
+            
             try:
-
+                
                 if item.robot_id == 0:
                     # print("updated position")
                     player0.setPosition(item.x, item.y)
@@ -71,9 +78,30 @@ def vision_callback(data):
                     player3.setPosition(item.x, item.y)
                     player3.setAngle(item.orientation)
                 if item.robot_id == 4:
-                    player4.setPosition(item.x, item.y)
+                    player4.setPosition(item.x,item.y)
                     player4.setAngle(item.orientation)
+            except:
+                pass
+    if len(data.robots_yellow)> 0:
+        for item in data.robots_yellow:
 
+            try:
+
+                if item.robot_id == 0:
+                    rival0.setPosition(item.x,item.y)
+                    rival0.setAngle(item.orientation)
+                if item.robot_id == 1:
+                    rival1.setPosition(item.x,item.y)
+                    rival1.setAngle(item.orientation)
+                if item.robot_id == 2:
+                    rival2.setPosition(item.x,item.y)
+                    rival2.setAngle(item.orientation)
+                if item.robot_id == 3:
+                    rival3.setPosition(item.x,item.y)
+                    rival3.setAngle(item.orientation)
+                if item.robot_id == 4:
+                    rival4.setPosition(item.x,item.y)
+                    rival4.setAngle(item.orientation)
             except:
                 pass
 
@@ -82,39 +110,84 @@ def vision_callback(data):
         ball_position['y'] = data.balls[0].y
 
 
-# def go_to_ball(player):
-#
-#         player.setPublisher(rospy.Publisher("/robot_blue_"+player.getId()+"/cmd", SSL,queue_size=10))
-#
-#
-#         r = rospy.Rate(10)
-#
-#
-#
-#         msg = SSL()
-#
-#         while not rospy.is_shutdown():
-#
-#             goal_angle = pend(ball_position,player.getPosition())
-#             heading = abs(goal_angle - player.getAngle())
-#             distance = dist(ball_position,player.getPosition())
-#
-#             if(distance < 0.2):
-#                 msg.cmd_vel.linear.x = 0
-#                 msg.cmd_vel.angular.z = 0
-#             else:
-#                 if(heading<0.2):
-#                     msg.cmd_vel.linear.x = 0.5
-#                     msg.cmd_vel.angular.z = 0
-#                 else:
-#                     msg.cmd_vel.linear.x = 0
-#                     msg.cmd_vel.angular.z = 0.25
-#             print(heading, distance)
-#             player.getPublisher().publish(msg)
+def go_to_ball(player):
+        
+    player.setPublisher(rospy.Publisher("/robot_blue_"+player.getId()+"/cmd", SSL,queue_size=10))
+
+
+    r = rospy.Rate(10)
+
+
+
+    msg = SSL()
+    ret = True
+    while ret :
+
+        goal_angle = pend(POSITION_GOAL,player.getPosition())
+        heading = abs(goal_angle - player.getAngle())
+        distance = dist(POSITION_GOAL,player.getPosition())
+
+        if(distance < 105 and distance != 0.0):
+            msg.cmd_vel.linear.x = 0
+            msg.cmd_vel.angular.z = 0
+            ret = False
+
+        else:
+            if(heading < 0.2):
+                msg.cmd_vel.linear.x = 0.25
+                msg.cmd_vel.angular.z = 0
+            else:
+                msg.cmd_vel.linear.x = 0
+                msg.cmd_vel.angular.z = 0.25
+        print(player.getPosition())
+        print(heading, distance)
+        player.getPublisher().publish(msg)
+
+def go_to_goal(player):
+
+    player.setPublisher(rospy.Publisher("/robot_blue_"+player.getId()+"/cmd", SSL,queue_size=10))
+
+
+    r = rospy.Rate(10)
+
+
+
+    msg = SSL()
+    ret = True
+    while ret :
+
+        goal_angle = pend(ball_position,player.getPosition())
+        heading = abs(goal_angle - player.getAngle())
+        distance = dist(ball_position,player.getPosition())
+
+        if(distance < 105 and distance != 0.0):
+            msg.cmd_vel.linear.x = 0
+            msg.cmd_vel.angular.z = 0
+            ret = False
+
+        else:
+            if(heading < 0.2):
+                msg.cmd_vel.linear.x = 0.25
+                msg.cmd_vel.angular.z = 0
+            else:
+                msg.cmd_vel.linear.x = 0
+                msg.cmd_vel.angular.z = 0.25
+        print(player.getPosition())
+        print(heading, distance)
+        player.getPublisher().publish(msg)
 
 def pass_to_another_player(self):
+
+
     player_near = utils.get_closer_player()
-    angle_player_near = utils.get_angle_player_object(self.getPosition(), )
+    angle_player_near = utils.get_angle_player_object(self.getPosition(),)
+
+def search_to_pass(self):
+
+
+    player_near = utils.get_closer_player()
+    angle_player_near = utils.get_angle_player_object(self.getPosition(),)
+
 
 def _run():
     try:
@@ -134,7 +207,7 @@ if __name__ == "__main__":
     rospy.Subscriber("/vision", SSL_DetectionFrame, vision_callback)
     player0.setPublisher(rospy.Publisher("/robot_blue_"+player0.getId()+"/cmd", SSL, queue_size=10))
 
-#
+    #
     # bh = GoToTheball(player0, ball_position)
     # bh.action()
     # go_to_ball(player0)
@@ -152,4 +225,36 @@ if __name__ == "__main__":
     # subsumption_controller.behaviors = [GoToTheballV2(player0, ball_position), StayInFieldV2(player0)]
     # run()
     # print("Frun")
+
+def lucasMain():
+    rospy.init_node("grsim_pria",anonymous = False)
+    rospy.Subscriber("/vision",SSL_DetectionFrame,vision_callback)
+    # go_to_ball(player1)
+    # player1.dribbler_on()
+    # time.sleep(1.5)
+    # player1.dribbler_off()
+    # player1.kicker()
+    #go_to_ball(player1)
+    run  = True
+
+    while run:
+        #comienza la logica de Juego
+        if utils.they_have_the_ball(all_players,ball_position,0.04):
+            ##Si mi equipo tiene la pelota
+            player_near, distance_to_ball = utils.get_active_player(player_my_team,ball_position)
+            ##obtengo el jugador activo o mas cercano
+            go_to_goal(player_near)
+
+
+
+
+            if utils.they_have_the_ball(player_my_team,POSITION_GOAL,0.9):
+                #Si tengo un jugador en mejor posicion tengo que dar el pase
+                ## Implementar funcion de pase
+                pass
+            else:
+                go_to_goal(player3)
+
+
+
 

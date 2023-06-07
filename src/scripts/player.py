@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+import rospy
+from geometry_msgs.msg import Twist
+from grsim_ros_bridge_msgs.msg import SSL
+from krssg_ssl_msgs.msg import SSL_DetectionFrame, SSL_DetectionBall, SSL_DetectionRobot
+import math
+import utils
+
+#Funciones lambda para facilitar la lectura del codigo
+dist = lambda a,b: math.sqrt((a['x']-b['x'])**2+(a['y']-b['y'])**2)
+pend = lambda a,b: math.atan2((a['y']-b['y']),(a['x']-b['x']))
 
 
 class Player:
@@ -53,8 +63,40 @@ class Player:
         self.active = active
     
 
-    
+
+    def kicker(self):
+
+        self.setPublisher(rospy.Publisher("/robot_blue_"+self.getId()+"/cmd", SSL,queue_size=10))
+
+        r = rospy.Rate(10)
+
+        msg = SSL()
+        msg.kicker = True
+        print("patie soy: ",self.getId())
+        self.getPublisher().publish(msg)
+        msg.kicker = False
+        self.getPublisher().publish(msg)
 
 
+    def dribbler_on(self):
+        self.setPublisher(rospy.Publisher("/robot_blue_"+self.getId()+"/cmd", SSL,queue_size=10))
 
-    
+        r = rospy.Rate(10)
+
+        msg = SSL()
+        msg.dribbler = True
+        print("estoy dribbleando: ",self.getId())
+        self.getPublisher().publish(msg)
+
+    def dribbler_off(self):
+        self.setPublisher(rospy.Publisher("/robot_blue_"+self.getId()+"/cmd", SSL,queue_size=10))
+
+        r = rospy.Rate(10)
+
+        msg = SSL()
+        msg.dribbler = False
+        print("deje de dribblear: ",self.getId())
+        self.getPublisher().publish(msg)
+        
+
+
