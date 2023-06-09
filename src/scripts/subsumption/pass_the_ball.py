@@ -1,13 +1,15 @@
 from subsumption.arbitratorV2 import Behavior
 from grsim_ros_bridge_msgs.msg import SSL
+from utils import dist
 import rospy
 
 class PassTheballV2(Behavior):
 
-    def __init__(self,player):
+    def __init__(self, player, ball_position):
         super().__init__()
         self.suppressed=True
         self.player=player
+        self.ball_position = ball_position
         
     def action(self):
         self.suppressed=False
@@ -17,18 +19,23 @@ class PassTheballV2(Behavior):
         r = rospy.Rate(10)
         msg = SSL()
 
-        while not rospy.is_shutdown():
 
             ##goal_angle = pend(ball_position,self.player.getPosition())
             #heading = abs(goal_angle - self.player.getAngle())
             #distance = dist(ball_position,self.player.getPosition())
-            msg.kicker=True
-            self.player.getPublisher().publish(msg)
+        msg.cmd_vel.linear.x = 0
+        msg.cmd_vel.angular.z = 0
+        msg.kicker = True
+        # if self.contador % 5000 == 0:
+        print("playerid: ", self.player.getId(), "publisher: ", self.player.getPublisher(),' mensaje ',msg)
+        self.player.getPublisher().publish(msg)
         
     def suppress(self):
         print('suppress pass the ball')
         self.suppressed=True
 
     def check(self):
-        print('check passTheball')
-        return True #condicion para ejecutar el go to the ball
+
+        distance = dist(self.ball_position, self.player.getPosition())
+        print('check passTheball distance: ',distance)
+        return distance < 105 #condicion para ejecutar el go to the ball

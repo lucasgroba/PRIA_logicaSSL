@@ -25,8 +25,6 @@ class GoToTheballV2(Behavior):
 
         r = rospy.Rate(10)
         msg = SSL()
-        print('action GoToTheball--2'+str(not rospy.is_shutdown() or not self.suppressed))
-
         # while not rospy.is_shutdown() or not self.suppressed:
 
         #     self.contador += 1 
@@ -38,7 +36,7 @@ class GoToTheballV2(Behavior):
         distance = dist(self.ball_position, self.player.getPosition())
         
 
-        if (distance < 0.2):
+        if (distance < 105):
             msg.cmd_vel.linear.x = 0
             msg.cmd_vel.angular.z = 0
         else:
@@ -48,13 +46,13 @@ class GoToTheballV2(Behavior):
             else:
                 msg.cmd_vel.linear.x = 0
                 msg.cmd_vel.angular.z = 1
-        
-        if self.contador % 5000 == 0:
-            print(heading, distance, "playerid: ", self.player.getId(), "publisher: ", self.player.getPublisher(),' mensaje ',msg)
-        try:
-            self.player.getPublisher().publish(msg)
-        except:
-            print("exception")
+            # if self.contador % 5000 == 0:
+            #     print(heading, distance, "playerid: ", self.player.getId(), "publisher: ", self.player.getPublisher(),' mensaje ',msg)
+            try:
+                self.player.getPublisher().publish(msg)
+            except:
+                print("exception")
+
 
  
 

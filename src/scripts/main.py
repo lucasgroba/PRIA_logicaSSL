@@ -13,6 +13,7 @@ from krssg_ssl_msgs.msg import SSL_DetectionFrame, SSL_DetectionBall, SSL_Detect
 from subsumption.arbitratorV2 import Controller
 from subsumption.go_to_the_ball import GoToTheballV2
 from subsumption.stay_in_field import StayInFieldV2
+from subsumption.pass_the_ball import PassTheballV2
 import math
 import utils
 import player
@@ -217,7 +218,8 @@ if __name__ == "__main__":
     # bArray = [GoToTheball(player0, ball_position), StayInField(player0)]
     # arby = Arbitrator(bArray, True)
     # arby.go()
-    subsumption_controller_player0.behaviors = [StayInFieldV2(player0), GoToTheballV2(player0, ball_position)]
+    subsumption_controller_player0.behaviors = [StayInFieldV2(player0), PassTheballV2(player0, ball_position),
+                                                GoToTheballV2(player0, ball_position)]
     subsumption_controller_player1.behaviors = [StayInFieldV2(player1), GoToTheballV2(player1, ball_position)]
     subsumption_controller_player2.behaviors = [StayInFieldV2(player2), GoToTheballV2(player2, ball_position)]
     controller_list = [subsumption_controller_player0, subsumption_controller_player1, subsumption_controller_player2]

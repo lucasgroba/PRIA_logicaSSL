@@ -72,10 +72,6 @@ class Player:
 
     def kicker(self):
 
-        self.setPublisher(rospy.Publisher("/robot_blue_"+self.getId()+"/cmd", SSL,queue_size=10))
-
-        r = rospy.Rate(10)
-
         msg = SSL()
         msg.kicker = True
         print("patie soy: ",self.getId())
@@ -85,20 +81,12 @@ class Player:
 
 
     def dribbler_on(self):
-        self.setPublisher(rospy.Publisher("/robot_blue_"+self.getId()+"/cmd", SSL,queue_size=10))
-
-        r = rospy.Rate(10)
-
         msg = SSL()
         msg.dribbler = True
         print("estoy dribbleando: ",self.getId())
         self.getPublisher().publish(msg)
 
     def dribbler_off(self):
-        self.setPublisher(rospy.Publisher("/robot_blue_"+self.getId()+"/cmd", SSL,queue_size=10))
-
-        r = rospy.Rate(10)
-
         msg = SSL()
         msg.dribbler = False
         print("deje de dribblear: ",self.getId())
