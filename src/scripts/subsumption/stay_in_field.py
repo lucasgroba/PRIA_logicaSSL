@@ -15,21 +15,18 @@ class StayInFieldV2(Behavior):
 
         r = rospy.Rate(10)
         msg = SSL()
-
-        while not rospy.is_shutdown() and not self.suppressed:
-
-            msg.cmd_vel.angular.x = 0
-            msg.cmd_vel.angular.y = 0
-            msg.cmd_vel.angular.z = 0
-            msg.cmd_vel.linear.x = 0
-            msg.cmd_vel.linear.y = 0
-            msg.cmd_vel.linear.z = 0
-            self.player.getPublisher().publish(msg)
+        msg.cmd_vel.angular.x = 0
+        msg.cmd_vel.angular.y = 0
+        msg.cmd_vel.angular.z = 0
+        msg.cmd_vel.linear.x = -1
+        msg.cmd_vel.linear.y = 0
+        msg.cmd_vel.linear.z = 0
+        self.player.getPublisher().publish(msg)
             
     def suppress(self):
         print('suppress StayInField')
         self.suppressed=True
 
     def check(self):
-        print('check StayInField: '+self.player.getPosition()['x'])
+        print('check StayInField: ',self.player.getPosition()['x'])
         return self.player.getPosition()['x'] >2000#condicion para ejecutar el go to the ball

@@ -17,43 +17,46 @@ class GoToTheballV2(Behavior):
         self.suppressed = False
         self.player = player
         self.ball_position = ball_position
+        self.contador = 0
 
     def action(self):
         self.suppressed = False
-        print('action GoToTheball--')
+        print('action GoToTheball--', self.player.getPosition()['x'])
 
         r = rospy.Rate(10)
         msg = SSL()
-        print('action GoToTheball--2'+str(not (rospy.is_shutdown() or self.suppressed)))
+        print('action GoToTheball--2'+str(not rospy.is_shutdown() or not self.suppressed))
 
-        while not rospy.is_shutdown() or not self.suppressed:
-            print("ball position: ", str(self.ball_position), " player: ", str(self.player.getPosition()))
+        # while not rospy.is_shutdown() or not self.suppressed:
 
-            goal_angle = pend(self.ball_position, self.player.getPosition())
-            print("im in2")
+        #     self.contador += 1 
+        #     if self.contador %5000 == 0: 
+        #         print("ball position: ", str(self.ball_position), " player: ", str(self.player.getPosition()))
 
-            heading = abs(goal_angle - self.player.getAngle())
-            print("im in3")
-            distance = dist(self.ball_position, self.player.getPosition())
-            print(heading, distance)
+        goal_angle = pend(self.ball_position, self.player.getPosition())
+        heading = abs(goal_angle - self.player.getAngle())
+        distance = dist(self.ball_position, self.player.getPosition())
+        
 
-            if (distance < 0.2):
-                msg.cmd_vel.linear.x = 0
+        if (distance < 0.2):
+            msg.cmd_vel.linear.x = 0
+            msg.cmd_vel.angular.z = 0
+        else:
+            if (heading < 0.2):
+                msg.cmd_vel.linear.x = 0.25
                 msg.cmd_vel.angular.z = 0
             else:
-                if (heading < 0.2):
-                    msg.cmd_vel.linear.x = 0.5
-                    msg.cmd_vel.angular.z = 0
-                else:
-                    msg.cmd_vel.linear.x = 0
-                    msg.cmd_vel.angular.z = 1
-            print(heading, distance, "playerid: ", self.player.getId(), "publisher: ", self.player.topic)
-            try:
-                self.player.getPublisher().publish(msg)
-            except:
-                print("exception")
+                msg.cmd_vel.linear.x = 0
+                msg.cmd_vel.angular.z = 0.25
+        
+        if self.contador %5000 == 0: 
+            print(heading, distance, "playerid: ", self.player.getId(), "publisher: ", self.player.getPublisher(),' mensaje ',msg)
+        try:
+            self.player.getPublisher().publish(msg)
+        except:
+            print("exception")
 
-            print('check goToTheBall'+str(self.player.getPosition()['x'] >2000))
+ 
 
     def suppress(self):
         print('suppress come')

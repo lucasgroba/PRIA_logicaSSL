@@ -18,9 +18,10 @@ class Player:
         self.position = {'x': 0, 'y': 0}
         self.angle = 0
         self.id = id
-        self.publisher = None
+        self.publisher = rospy.Publisher("/robot_blue_"+self.getId()+"/cmd", SSL, queue_size=10)
         self.ball_possession = False
         self.active = False
+        self.topic = None
 
 
     def getPosition(self):
@@ -61,7 +62,12 @@ class Player:
     
     def setActive(self, active):
         self.active = active
-    
+
+    def setTopic(self, topic):
+        self.topic = topic
+
+    def getTopic(self):
+        return self.topic    
 
 
     def kicker(self):

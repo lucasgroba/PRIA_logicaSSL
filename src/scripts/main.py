@@ -65,7 +65,6 @@ def vision_callback(data):
             try:
                 
                 if item.robot_id == 0:
-                    # print("updated position")
                     player0.setPosition(item.x, item.y)
                     player0.setAngle(item.orientation)
                 if item.robot_id == 1:
@@ -203,10 +202,9 @@ def run():
 
 
 if __name__ == "__main__":
-    rospy.init_node("grsim_pria", anonymous=False)
-    rospy.Subscriber("/vision", SSL_DetectionFrame, vision_callback)
-    player0.setPublisher(rospy.Publisher("/robot_blue_"+player0.getId()+"/cmd", SSL, queue_size=10))
-
+    rospy.init_node("grsim_pria",anonymous = False)
+    rospy.Subscriber("/vision",SSL_DetectionFrame,vision_callback)
+    r = rospy.Rate(10)
     #
     # bh = GoToTheball(player0, ball_position)
     # bh.action()
@@ -217,43 +215,43 @@ if __name__ == "__main__":
     # b3 = PassTheball(player0)
     #
     # bArray = [b3, b2, b1, b0]
-    bArray = [GoToTheball(player0, ball_position), StayInField(player0)]
-    arby = Arbitrator(bArray, True)
-    arby.go()
-    #
-    # print("run")
-    # subsumption_controller.behaviors = [GoToTheballV2(player0, ball_position), StayInFieldV2(player0)]
-    # run()
-    # print("Frun")
+    #bArray = [GoToTheball(player0, ball_position), StayInField(player0)]
+    #arby = Arbitrator(bArray, True)
+    #arby.go()
+    subsumption_controller.behaviors = [StayInFieldV2(player0),GoToTheballV2(player0, ball_position)]
+    run()
+    print("Frun")
 
-def lucasMain():
-    rospy.init_node("grsim_pria",anonymous = False)
-    rospy.Subscriber("/vision",SSL_DetectionFrame,vision_callback)
-    # go_to_ball(player1)
-    # player1.dribbler_on()
-    # time.sleep(1.5)
-    # player1.dribbler_off()
-    # player1.kicker()
-    #go_to_ball(player1)
-    run  = True
+    rospy.spin()
 
-    while run:
-        #comienza la logica de Juego
-        if utils.they_have_the_ball(all_players,ball_position,0.04):
-            ##Si mi equipo tiene la pelota
-            player_near, distance_to_ball = utils.get_active_player(player_my_team,ball_position)
-            ##obtengo el jugador activo o mas cercano
-            go_to_goal(player_near)
+# def lucasMain():
+#     rospy.init_node("grsim_pria",anonymous = False)
+#     rospy.Subscriber("/vision",SSL_DetectionFrame,vision_callback)
+#     # go_to_ball(player1)
+#     # player1.dribbler_on()
+#     # time.sleep(1.5)
+#     # player1.dribbler_off()
+#     # player1.kicker()
+#     #go_to_ball(player1)
+#     run  = True
 
-
+#     while run:
+#         #comienza la logica de Juego
+#         if utils.they_have_the_ball(all_players,ball_position,0.04):
+#             ##Si mi equipo tiene la pelota
+#             player_near, distance_to_ball = utils.get_active_player(player_my_team,ball_position)
+#             ##obtengo el jugador activo o mas cercano
+#             go_to_goal(player_near)
 
 
-            if utils.they_have_the_ball(player_my_team,POSITION_GOAL,0.9):
-                #Si tengo un jugador en mejor posicion tengo que dar el pase
-                ## Implementar funcion de pase
-                pass
-            else:
-                go_to_goal(player3)
+
+
+#             if utils.they_have_the_ball(player_my_team,POSITION_GOAL,0.9):
+#                 #Si tengo un jugador en mejor posicion tengo que dar el pase
+#                 ## Implementar funcion de pase
+#                 pass
+#             else:
+#                 go_to_goal(player3)
 
 
 
