@@ -43,13 +43,13 @@ class GoToTheballV2(Behavior):
             msg.cmd_vel.angular.z = 0
         else:
             if (heading < 0.2):
-                msg.cmd_vel.linear.x = 0.25
+                msg.cmd_vel.linear.x = 0.75
                 msg.cmd_vel.angular.z = 0
             else:
                 msg.cmd_vel.linear.x = 0
-                msg.cmd_vel.angular.z = 0.25
+                msg.cmd_vel.angular.z = 1
         
-        if self.contador %5000 == 0: 
+        if self.contador % 5000 == 0:
             print(heading, distance, "playerid: ", self.player.getId(), "publisher: ", self.player.getPublisher(),' mensaje ',msg)
         try:
             self.player.getPublisher().publish(msg)
