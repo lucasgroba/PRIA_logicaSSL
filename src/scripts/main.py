@@ -6,6 +6,7 @@ from behivours.stay_in_field import StayInField
 from behivours.stop_all_action import StopAllAction
 from behivours.pass_the_ball import PassTheball
 from subsumption.arbitrator import Arbitrator
+
 import rospy
 from geometry_msgs.msg import Twist
 from grsim_ros_bridge_msgs.msg import SSL
@@ -14,6 +15,8 @@ from subsumption.arbitratorV2 import Controller
 from subsumption.go_to_the_ball import GoToTheballV2
 from subsumption.stay_in_field import StayInFieldV2
 from subsumption.pass_the_ball import PassTheballV2
+from subsumption.shoot_ball import ShootBallV2
+from subsumption.go_to_the_goal import GoToTheGoalV2
 import math
 import utils
 import player
@@ -22,7 +25,7 @@ import sys
 import time
 
 # Constantes
-POSITION_GOAL = {'x': 2, 'y': 0}
+POSITION_GOAL = {'x': 2000, 'y': 0}
 
 # Funciones lambda para facilitar la lectura del codigo
 dist = lambda a, b: math.sqrt((a['x'] - b['x']) ** 2 + (a['y'] - b['y']) ** 2)
@@ -38,6 +41,7 @@ player4 = player.Player('blue', '4')
 subsumption_controller_player0 = Controller(False)
 subsumption_controller_player1 = Controller(False)
 subsumption_controller_player2 = Controller(False)
+subsumption_controller_player3 = Controller(False)
 
 rival0 = player.Player('yellow', '0')
 rival1 = player.Player('yellow', '1')
@@ -219,10 +223,11 @@ if __name__ == "__main__":
     # arby = Arbitrator(bArray, True)
     # arby.go()
     subsumption_controller_player0.behaviors = [StayInFieldV2(player0), PassTheballV2(player0, ball_position),
-                                                GoToTheballV2(player0, ball_position)]
-    subsumption_controller_player1.behaviors = [StayInFieldV2(player1), GoToTheballV2(player1, ball_position)]
-    subsumption_controller_player2.behaviors = [StayInFieldV2(player2), GoToTheballV2(player2, ball_position)]
-    controller_list = [subsumption_controller_player0, subsumption_controller_player1, subsumption_controller_player2]
+                                                GoToTheballV2(player0, ball_position,all_players,player_my_team)]
+    subsumption_controller_player1.behaviors = [StayInFieldV2(player1), GoToTheballV2(player1, ball_position,all_players,player_my_team)]
+    subsumption_controller_player2.behaviors = [StayInFieldV2(player2), GoToTheballV2(player2, ball_position,all_players,player_my_team)]
+    subsumption_controller_player3.behaviors = [StayInFieldV2(player3),ShootBallV2(player3, ball_position,POSITION_GOAL,all_players,player_my_team),GoToTheGoalV2(player3, ball_position,POSITION_GOAL,all_players,player_my_team), GoToTheballV2(player3, ball_position,all_players,player_my_team)]
+    controller_list = [subsumption_controller_player0, subsumption_controller_player1, subsumption_controller_player2,subsumption_controller_player3]
     run(controller_list)
     print("Frun")
 

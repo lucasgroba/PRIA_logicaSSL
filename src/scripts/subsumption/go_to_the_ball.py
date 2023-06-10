@@ -3,6 +3,7 @@ from grsim_ros_bridge_msgs.msg import SSL
 import rospy
 import math
 import traceback
+import utils
 
 
 dist = lambda a, b: math.sqrt((a['x'] - b['x']) ** 2 + (a['y'] - b['y']) ** 2)
@@ -12,12 +13,14 @@ ball_position = {'x': 0, 'y': 0}
 
 class GoToTheballV2(Behavior):
 
-    def __init__(self, player, ball_position):
+    def __init__(self, player, ball_position, all_players, players_my_team):
         super().__init__()
         self.suppressed = False
         self.player = player
         self.ball_position = ball_position
         self.contador = 0
+        self.all_players = all_players
+        self.players_my_team = players_my_team
 
     def action(self):
         self.suppressed = False
@@ -25,12 +28,6 @@ class GoToTheballV2(Behavior):
 
         r = rospy.Rate(10)
         msg = SSL()
-        # while not rospy.is_shutdown() or not self.suppressed:
-
-        #     self.contador += 1 
-        #     if self.contador %5000 == 0: 
-        #         print("ball position: ", str(self.ball_position), " player: ", str(self.player.getPosition()))
-
         goal_angle = pend(self.ball_position, self.player.getPosition())
         heading = abs(goal_angle - self.player.getAngle())
         distance = dist(self.ball_position, self.player.getPosition())
@@ -61,5 +58,11 @@ class GoToTheballV2(Behavior):
         self.suppressed = True
 
     def check(self):
-        # print('check goToTheBall'+str(self.player.getPosition()['x'] >2000))
-        return True  # condicion para ejecutar el go to the ball
+        if not utils.they_have_the_ball(self.all_players,self.ball_position,105):
+            player_near, distance_to_ball = utils.get_active_player(self.players_my_team,self.ball_position)
+            print('go_to_teh_ball: distancia a mi jugador mas cercano',self.player.getId(), player_near.getId(),distance_to_ball)
+            if(player_near.getId() == self.player.getId()):
+                return True
+        else:
+            return False  
+        # condicion para ejecutar el go to the ball

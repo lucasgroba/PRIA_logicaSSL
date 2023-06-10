@@ -42,6 +42,9 @@ class Player:
     def getActive(self):
         return self.active
     
+    def getTeam(self):
+        return self.team
+    
 
 
     def setPosition(self,x,y):

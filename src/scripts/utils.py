@@ -18,7 +18,7 @@ def get_closer_player(all_players, our_player, isRival = False):
     n = len(players)
     distances = []
     for i in range(n):
-        distances.append(dist(players[i].get_position(),our_player.get_position()))
+        distances.append(dist(players[i].getPosition(),our_player.getPosition()))
     np_distances = np.array(distances)
 
     index = np_distances.argmin()
@@ -54,14 +54,14 @@ def they_have_the_ball(all_players, ball_position, gap_player_ball):
     n = len(all_players)
     distances = []
     for i in range(n):
-        distances.append(dist(all_players[i].get_position(),ball_position))
+        distances.append(dist(all_players[i].getPosition(),ball_position))
     np_distances = np.array(distances)
 
     distance = np_distances.min()
 
     closer_player = all_players[np_distances.argmin()]
 
-    if closer_player.get_team() != 'blue':
+    if closer_player.getTeam() != 'blue':
         if distance <= gap_player_ball:
             return True
 
@@ -82,7 +82,7 @@ def get_distance_player_object(player_position, object_position):
 def get_active_player(players, ball_position):
     #soy el jugador mas cercano
 
-    our_players_positions = [item.get_position() for item in players]
+    our_players_positions = [item.getPosition() for item in players]
     index_player, distance_player_ball = ball_player_min_distance(our_players_positions, ball_position)
 
     closer_player = players[index_player]
