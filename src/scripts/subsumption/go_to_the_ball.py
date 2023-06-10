@@ -58,11 +58,12 @@ class GoToTheballV2(Behavior):
         self.suppressed = True
 
     def check(self):
-        if not utils.they_have_the_ball(self.all_players,self.ball_position,105):
+            print('check goToTheBall')
             player_near, distance_to_ball = utils.get_active_player(self.players_my_team,self.ball_position)
-            print('go_to_teh_ball: distancia a mi jugador mas cercano',self.player.getId(), player_near.getId(),distance_to_ball)
+            #print('go_to_teh_ball: distancia a mi jugador mas cercano',self.player.getId(), player_near.getId(),distance_to_ball)
             if(player_near.getId() == self.player.getId()):
                 return True
-        else:
-            return False  
+            else:
+                return False
+
         # condicion para ejecutar el go to the ball

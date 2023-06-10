@@ -222,12 +222,17 @@ if __name__ == "__main__":
     # bArray = [GoToTheball(player0, ball_position), StayInField(player0)]
     # arby = Arbitrator(bArray, True)
     # arby.go()
-    subsumption_controller_player0.behaviors = [StayInFieldV2(player0), PassTheballV2(player0, ball_position),
-                                                GoToTheballV2(player0, ball_position,all_players,player_my_team)]
-    subsumption_controller_player1.behaviors = [StayInFieldV2(player1), GoToTheballV2(player1, ball_position,all_players,player_my_team)]
-    subsumption_controller_player2.behaviors = [StayInFieldV2(player2), GoToTheballV2(player2, ball_position,all_players,player_my_team)]
+
+
+
+    #subsumption_controller_player0.behaviors = [StayInFieldV2(player0), PassTheballV2(player0, ball_position),
+    #                                           GoToTheballV2(player0, ball_position,all_players,player_my_team)]
+    #subsumption_controller_player1.behaviors = [StayInFieldV2(player1), GoToTheballV2(player1, ball_position,all_players,player_my_team)]
+    #subsumption_controller_player2.behaviors = [StayInFieldV2(player2), GoToTheballV2(player2, ball_position,all_players,player_my_team)]
     subsumption_controller_player3.behaviors = [StayInFieldV2(player3),ShootBallV2(player3, ball_position,POSITION_GOAL,all_players,player_my_team),GoToTheGoalV2(player3, ball_position,POSITION_GOAL,all_players,player_my_team), GoToTheballV2(player3, ball_position,all_players,player_my_team)]
-    controller_list = [subsumption_controller_player0, subsumption_controller_player1, subsumption_controller_player2,subsumption_controller_player3]
+    controller_list = [
+        #subsumption_controller_player0, subsumption_controller_player1, subsumption_controller_player2,
+        subsumption_controller_player3]
     run(controller_list)
     print("Frun")
 

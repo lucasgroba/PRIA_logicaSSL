@@ -86,8 +86,20 @@ def get_active_player(players, ball_position):
     index_player, distance_player_ball = ball_player_min_distance(our_players_positions, ball_position)
 
     closer_player = players[index_player]
-
     return [closer_player, distance_player_ball]
+    
+def get_player_have_ball(players, ball_position):
+    #retorna el jugador que tiene la pelota si nadie la tiene retorna None
+
+    our_players_positions = [item.getPosition() for item in players]
+    index_player, distance_player_ball = ball_player_min_distance(our_players_positions, ball_position)
+
+    closer_player = players[index_player]
+    print('utils.dist: ', dist(closer_player.getPosition(), ball_position))
+    if(dist(closer_player.getPosition(), ball_position)>115):
+        return [None,None]
+    else:
+        return [closer_player, distance_player_ball]
 
     #if closer_player.ball_is_in_area(ball_position):
         # si la pelota esta en Area del player mas cercano, se activa

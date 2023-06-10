@@ -16,21 +16,43 @@ class ShootBallV2(Behavior):
         
     def action(self):
         self.suppressed=False
-        print('action shoot the ball')
+        
         self.player.setPublisher(rospy.Publisher("/robot_blue_"+self.player.getId()+"/cmd", SSL,queue_size=10))
         
+
+        goal_angle = utils.pend(self.goal_position,self.player.getPosition())
+        #obtengo pendiente entre el arco y el jugador 
+        heading_goal = abs(goal_angle - self.player.getAngle())
+        #obtengo la diferencia de orientecion ente arco y robot 
+        distance_goal = utils.dist(self.goal_position,self.player.getPosition())
+        #obtengo la distancia entre el arco y el jugador
+
+        ball_angle = utils.pend(self.ball_position,self.player.getPosition())
+        #obtengo pendiente entre la pelota y el jugador 
+        heading_ball = abs(ball_angle - self.player.getAngle())
+        #obtengo la diferencia de orientecion la pelota y el robot 
+        distance_ball= utils.dist(self.ball_position,self.player.getPosition())
+        #obtengo la distancia entre la pelota y el jugador
+
+        print('Action Shoot', goal_angle ,heading_goal,distance_goal,ball_angle,heading_ball,distance_ball)
         r = rospy.Rate(10)
         msg = SSL()
+        if (abs(heading_ball - heading_goal)< 0.3 and distance_goal < 1100 and distance_ball < 103 and abs(goal_angle) < 15):
+            msg.cmd_vel.linear.x = 0
+            msg.cmd_vel.angular.z = 0
+            msg.kicker = True
+            print('Patie ', self.player.getId())
+        else:
+            print('Me acomodo para patear')
+            if (goal_angle > 15):
+                msg.cmd_vel.linear.x = 0
+                msg.cmd_vel.angular.z = 0.50
+                #roto hacia la izquierda
+            elif(goal_angle < -15):
+                msg.cmd_vel.linear.x = 0
+                msg.cmd_vel.angular.z = -0.50
+                #roto hacia la derecha
 
-
-            ##goal_angle = pend(ball_position,self.player.getPosition())
-            #heading = abs(goal_angle - self.player.getAngle())
-            #distance = dist(ball_position,self.player.getPosition())
-        msg.cmd_vel.linear.x = 0
-        msg.cmd_vel.angular.z = 0
-        msg.kicker = True
-        # if self.contador % 5000 == 0:
-        print("playerid: ", self.player.getId(), "publisher: ", self.player.getPublisher(),' mensaje ',msg)
         self.player.getPublisher().publish(msg)
         
     def suppress(self):
@@ -44,16 +66,20 @@ class ShootBallV2(Behavior):
         self.suppressed=True
 
     def check(self):
-
-        if utils.they_have_the_ball(self.all_players,self.ball_position,105):
-            print('Entre al if del check del shoot')
-            player_near, distance_to_ball = utils.get_active_player(self.players_my_team,self.ball_position)
+        print('Check shoot ball') 
+        if not utils.they_have_the_ball(self.all_players,self.ball_position,105):
+            player_near, distance_to_ball = utils.get_player_have_ball(self.players_my_team,self.ball_position)
             ##me retorna el jugador que tiene la pelota
-            player_near_goal, distance_to_goal = utils.get_active_player(self.players_my_team,self.goal_position)
-            #retorna el jugador de mi equipo  mas cercano al arco rival
-            if(player_near.getId() == self.player.getId() and player_near_goal.getId() == self.player.getId() and distance_to_goal < 1500):
-                return True
+            if(player_near != None and distance_to_ball != None and distance_to_ball < 105):
+                player_near_goal, distance_to_goal = utils.get_active_player(self.players_my_team,self.goal_position)
+                #retorna el jugador de mi equipo  mas cercano al arco rival
+                
+                if(player_near.getId() == self.player.getId() and player_near_goal.getId() == self.player.getId() and distance_to_goal < 1100):
+                    print('Entro al Action Shoot:', distance_to_goal, self.player.getId())
+                    return True
+                else:
+                    return False
             else:
-                return False
+                return False 
         else:
             return False  
