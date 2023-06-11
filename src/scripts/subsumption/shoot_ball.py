@@ -17,7 +17,7 @@ class ShootBallV2(Behavior):
     def action(self):
         self.suppressed=False
         
-        self.player.setPublisher(rospy.Publisher("/robot_blue_"+self.player.getId()+"/cmd", SSL,queue_size=10))
+        # self.player.setPublisher(rospy.Publisher("/robot_blue_"+self.player.getId()+"/cmd", SSL,queue_size=10))
         
 
         goal_angle = utils.pend(self.goal_position,self.player.getPosition())
@@ -40,7 +40,7 @@ class ShootBallV2(Behavior):
         if (abs(heading_ball - heading_goal)< 0.3 and distance_goal < 1900 and distance_ball < 103 and abs(goal_angle) < 15):
             msg.cmd_vel.linear.x = 0
             msg.cmd_vel.angular.z = 0
-            msg.kicker = True
+            msg.kicker = 100
             print('Patie ', self.player.getId())
         else:
             print('Me acomodo para patear')

@@ -15,8 +15,7 @@ class PassTheballV2(Behavior):
         self.suppressed=False
         print('action pass the ball')
         self.player.setPublisher(rospy.Publisher("/robot_blue_"+self.player.getId()+"/cmd", SSL,queue_size=10))
-        
-        r = rospy.Rate(10)
+
         msg = SSL()
 
 
@@ -25,7 +24,7 @@ class PassTheballV2(Behavior):
             #distance = dist(ball_position,self.player.getPosition())
         msg.cmd_vel.linear.x = 0
         msg.cmd_vel.angular.z = 0
-        msg.kicker = True
+        msg.kicker = 100
         # if self.contador % 5000 == 0:
         print("playerid: ", self.player.getId(), "publisher: ", self.player.getPublisher(),' mensaje ',msg)
         self.player.getPublisher().publish(msg)
