@@ -37,7 +37,7 @@ class ShootBallV2(Behavior):
         print('Action Shoot', goal_angle ,heading_goal,distance_goal,ball_angle,heading_ball,distance_ball)
         r = rospy.Rate(10)
         msg = SSL()
-        if (abs(heading_ball - heading_goal)< 0.3 and distance_goal < 1100 and distance_ball < 103 and abs(goal_angle) < 15):
+        if (abs(heading_ball - heading_goal)< 0.3 and distance_goal < 1900 and distance_ball < 103 and abs(goal_angle) < 15):
             msg.cmd_vel.linear.x = 0
             msg.cmd_vel.angular.z = 0
             msg.kicker = True
