@@ -11,7 +11,7 @@ pend = lambda a, b: math.atan2((a['y'] - b['y']), (a['x'] - b['x']))
 ball_position = {'x': 0, 'y': 0}
 
 
-class GoToTheballV2(Behavior):
+class GoToTheBallV2(Behavior):
 
     def __init__(self, player, ball_position, all_players, players_my_team):
         super().__init__()
