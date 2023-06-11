@@ -57,9 +57,10 @@ class RightSideAttackV2(Behavior):
         self.suppressed = True
 
     def check(self):
-            print('check right_side_attack')
-            if not utils.they_have_the_ball(self.all_players,self.ball_position,105):
-                player_have_ball, distance_to_ball = utils.get_player_have_ball(self.players_my_team,self.ball_position)
+            print('right condition:',not utils.they_have_the_ball(self.all_players,self.ball_position,110))
+            if not utils.they_have_the_ball(self.all_players,self.ball_position,110):
+                player_have_ball, distance_to_ball = utils.get_active_player(self.players_my_team,self.ball_position)
+                print('check right_side_attack:', player_have_ball.getId(),self.player.getId(), distance_to_ball)
                 if(player_have_ball != None and player_have_ball.getId() != self.player.getId() and self.player.getId() == 2 ):
                     #si uno de mis companeros tiene la peota y no soy yo y soy el jugador 2
                     return True

@@ -95,8 +95,8 @@ def get_player_have_ball(players, ball_position):
     index_player, distance_player_ball = ball_player_min_distance(our_players_positions, ball_position)
 
     closer_player = players[index_player]
-    print('utils.dist: ', dist(closer_player.getPosition(), ball_position))
-    if(dist(closer_player.getPosition(), ball_position)>115):
+    #print('utils.dist: ', dist(closer_player.getPosition(), ball_position))
+    if(dist(closer_player.getPosition(), ball_position)>110):
         return [None,None]
     else:
         return [closer_player, distance_player_ball]

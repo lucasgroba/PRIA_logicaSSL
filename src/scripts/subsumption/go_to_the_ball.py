@@ -24,14 +24,13 @@ class GoToTheBallV2(Behavior):
 
     def action(self):
         self.suppressed = False
-        print('action GoToTheball--', self.player.getPosition()['x'])
 
         r = rospy.Rate(10)
         msg = SSL()
         goal_angle = pend(self.ball_position, self.player.getPosition())
         heading = abs(goal_angle - self.player.getAngle())
         distance = dist(self.ball_position, self.player.getPosition())
-        
+        #print('action GoToTheball--', goal_angle)
 
         if (distance < 105):
             msg.cmd_vel.linear.x = 0
@@ -41,14 +40,12 @@ class GoToTheBallV2(Behavior):
                 msg.cmd_vel.linear.x = 0.75
                 msg.cmd_vel.angular.z = 0
             else:
-                msg.cmd_vel.linear.x = 0
-                msg.cmd_vel.angular.z = 1
-            # if self.contador % 5000 == 0:
-            #     print(heading, distance, "playerid: ", self.player.getId(), "publisher: ", self.player.getPublisher(),' mensaje ',msg)
+                    msg.cmd_vel.linear.x = 0
+                    msg.cmd_vel.angular.z = goal_angle
             try:
                 self.player.getPublisher().publish(msg)
             except:
-                print("exception")
+                print("exception go to the ball")
 
 
  
@@ -58,7 +55,7 @@ class GoToTheBallV2(Behavior):
         self.suppressed = True
 
     def check(self):
-            print('check goToTheBall')
+            #print('check goToTheBall')
             player_near, distance_to_ball = utils.get_active_player(self.players_my_team,self.ball_position)
             #print('go_to_teh_ball: distancia a mi jugador mas cercano',self.player.getId(), player_near.getId(),distance_to_ball)
             if(player_near.getId() == self.player.getId()):

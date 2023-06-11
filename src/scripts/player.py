@@ -13,12 +13,12 @@ pend = lambda a,b: math.atan2((a['y']-b['y']),(a['x']-b['x']))
 
 class Player:
 
-    def __init__(self, team, id):
+    def __init__(self, team, id, publisher):
         self.team = team
         self.position = {'x': 0, 'y': 0}
         self.angle = 0
         self.id = id
-        self.publisher = rospy.Publisher("/robot_blue_"+self.getId()+"/cmd", SSL, queue_size=10)
+        self.publisher = publisher
         self.ball_possession = False
         self.active = False
         self.topic = None

@@ -15,10 +15,13 @@ class GoToTheGoalV2(Behavior):
         self.players_my_team = players_my_team
         
     def action(self):
+
         self.suppressed = False
         r = rospy.Rate(10)
         msg = SSL()
         goal_angle = utils.pend(self.goal_position, self.player.getPosition())
+        ball_angle = utils.pend(self.ball_position, self.player.getPosition())
+        print('action GoToGoal: ', goal_angle, ball_angle)
         heading = abs(goal_angle - self.player.getAngle())
         distance = utils.dist(self.goal_position, self.player.getPosition())
         
@@ -33,34 +36,32 @@ class GoToTheGoalV2(Behavior):
                 msg.cmd_vel.angular.z = 0
                 #me muevo hacia delante 
             else:
-                msg.cmd_vel.linear.x = 0
-                msg.cmd_vel.angular.z = 0.75
-                #roto hacia la izquierda
+                if(goal_angle < 0):
+                    msg.cmd_vel.linear.x = 0
+                    msg.cmd_vel.angular.z = -0.5
+                else:
+                    msg.cmd_vel.linear.x = 0
+                    msg.cmd_vel.angular.z = 0.5
+                #roto hacia la izquierda o derecha segun corresponda
 
         try:
             self.player.getPublisher().publish(msg)
         except:
-            print("exception")
+            print("exception publicando go to de goal")
         
     def suppress(self):
         print('suppress come')
         self.suppressed = True
 
-    def check(self):
-        print('Check go to the goal') 
+    def check(self): 
         if not utils.they_have_the_ball(self.all_players,self.ball_position,105):
-            player_near, _ = utils.get_player_have_ball(self.players_my_team,self.ball_position)
-            print(player_near)
-            ##me retorna el jugador que tiene la pelota
-            if(player_near != None):
                 player_near_goal, _ = utils.get_active_player(self.players_my_team,self.goal_position)
+                player_near, ball_distance = utils.get_active_player(self.players_my_team,self.ball_position)
                 #retorna el jugador de mi equipo  mas cercano al arco rival
-                if(player_near.getId() == self.player.getId() and player_near_goal.getId() == self.player.getId()):
+                if(player_near.getId() == self.player.getId() and player_near_goal.getId() == self.player.getId() and ball_distance < 105):
                     print('Entre al goToTheGoal', self.player.getId())
                     return True
                 else:
                     return False
-            else:
-                return False
         else:
             return False  
