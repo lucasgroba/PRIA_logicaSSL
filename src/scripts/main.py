@@ -19,6 +19,7 @@ from subsumption.shoot_ball import ShootBallV2
 from subsumption.go_to_the_goal import GoToTheGoalV2
 from subsumption.left_side_attack import LeftSideAttackV2
 from subsumption.right_side_attack import RightSideAttackV2
+from subsumption.return_position_initial import ReturnPositionInitialV2
 import math
 import utils
 import player
@@ -33,11 +34,11 @@ POSITION_GOAL = {'x': 2000, 'y': 0}
 dist = lambda a, b: math.sqrt((a['x'] - b['x']) ** 2 + (a['y'] - b['y']) ** 2)
 pend = lambda a, b: math.atan2((a['y'] - b['y']), (a['x'] - b['x']))
 
-player0 = player.Player('blue', '0',rospy.Publisher("/robot_blue_"+'0'+"/cmd", SSL, queue_size=10))
-player1 = player.Player('blue', '1',rospy.Publisher("/robot_blue_"+'1'+"/cmd", SSL, queue_size=10))
-player2 = player.Player('blue', '2',rospy.Publisher("/robot_blue_"+'2'+"/cmd", SSL, queue_size=10))
-player3 = player.Player('blue', '3',rospy.Publisher("/robot_blue_"+'3'+"/cmd", SSL, queue_size=10))
-player4 = player.Player('blue', '4',rospy.Publisher("/robot_blue_"+'4'+"/cmd", SSL, queue_size=10))
+player0 = player.Player('blue', '0',rospy.Publisher("/robot_blue_"+'0'+"/cmd", SSL, queue_size=10),{'x': -2000, 'y': 0})
+player1 = player.Player('blue', '1',rospy.Publisher("/robot_blue_"+'1'+"/cmd", SSL, queue_size=10),{'x': -1300, 'y': 0})
+player2 = player.Player('blue', '2',rospy.Publisher("/robot_blue_"+'2'+"/cmd", SSL, queue_size=10),{'x': -1500, 'y': -1500})
+player3 = player.Player('blue', '3',rospy.Publisher("/robot_blue_"+'3'+"/cmd", SSL, queue_size=10),{'x': -500, 'y': 0})
+player4 = player.Player('blue', '4',rospy.Publisher("/robot_blue_"+'4'+"/cmd", SSL, queue_size=10),{'x': -1500, 'y': 1500})
 # instancio los jugadores de mi equipo
 
 subsumption_controller_player0 = Controller(False)
@@ -45,11 +46,11 @@ subsumption_controller_player1 = Controller(False)
 subsumption_controller_player2 = Controller(False)
 subsumption_controller_player3 = Controller(False)
 
-rival0 = player.Player('yellow', '0',rospy.Publisher("/robot_yellow_"+'0'+"/cmd", SSL, queue_size=10))
-rival1 = player.Player('yellow', '1',rospy.Publisher("/robot_yellow_"+'1'+"/cmd", SSL, queue_size=10))
-rival2 = player.Player('yellow', '2',rospy.Publisher("/robot_yellow_"+'2'+"/cmd", SSL, queue_size=10))
-rival3 = player.Player('yellow', '3',rospy.Publisher("/robot_yellow_"+'3'+"/cmd", SSL, queue_size=10))
-rival4 = player.Player('yellow', '4',rospy.Publisher("/robot_yellow_"+'4'+"/cmd", SSL, queue_size=10))
+rival0 = player.Player('yellow', '0',rospy.Publisher("/robot_yellow_"+'0'+"/cmd", SSL, queue_size=10),{'x': 2000, 'y': 0})
+rival1 = player.Player('yellow', '1',rospy.Publisher("/robot_yellow_"+'1'+"/cmd", SSL, queue_size=10),{'x': 2000, 'y': 0})
+rival2 = player.Player('yellow', '2',rospy.Publisher("/robot_yellow_"+'2'+"/cmd", SSL, queue_size=10),{'x': 2000, 'y': 0})
+rival3 = player.Player('yellow', '3',rospy.Publisher("/robot_yellow_"+'3'+"/cmd", SSL, queue_size=10),{'x': 2000, 'y': 0})
+rival4 = player.Player('yellow', '4',rospy.Publisher("/robot_yellow_"+'4'+"/cmd", SSL, queue_size=10),{'x': 2000, 'y': 0})
 # instancio mis rivales
 ball_position = {'x': 0, 'y': 0}
 # instancio la posicion de la pelota
@@ -116,72 +117,6 @@ def vision_callback(data):
         ball_position['y'] = data.balls[0].y
 
 
-# def go_to_ball(player):
-#
-#     player.setPublisher(rospy.Publisher("/robot_blue_"+player.getId()+"/cmd", SSL,queue_size=10))
-#
-#
-#     r = rospy.Rate(10)
-#
-#
-#
-#     msg = SSL()
-#     ret = True
-#     while ret :
-#
-#         goal_angle = pend(POSITION_GOAL,player.getPosition())
-#         heading = abs(goal_angle - player.getAngle())
-#         distance = dist(POSITION_GOAL,player.getPosition())
-#
-#         if(distance < 105 and distance != 0.0):
-#             msg.cmd_vel.linear.x = 0
-#             msg.cmd_vel.angular.z = 0
-#             ret = False
-#
-#         else:
-#             if(heading < 0.2):
-#                 msg.cmd_vel.linear.x = 0.25
-#                 msg.cmd_vel.angular.z = 0
-#             else:
-#                 msg.cmd_vel.linear.x = 0
-#                 msg.cmd_vel.angular.z = 0.25
-#         print(player.getPosition())
-#         print(heading, distance)
-#         player.getPublisher().publish(msg)
-
-# def go_to_goal(player):
-#
-#     player.setPublisher(rospy.Publisher("/robot_blue_"+player.getId()+"/cmd", SSL,queue_size=10))
-#
-#
-#     r = rospy.Rate(10)
-#
-#
-#
-#     msg = SSL()
-#     ret = True
-#     while ret :
-#
-#         goal_angle = pend(ball_position,player.getPosition())
-#         heading = abs(goal_angle - player.getAngle())
-#         distance = dist(ball_position,player.getPosition())
-#
-#         if(distance < 105 and distance != 0.0):
-#             msg.cmd_vel.linear.x = 0
-#             msg.cmd_vel.angular.z = 0
-#             ret = False
-#
-#         else:
-#             if(heading < 0.2):
-#                 msg.cmd_vel.linear.x = 0.25
-#                 msg.cmd_vel.angular.z = 0
-#             else:
-#                 msg.cmd_vel.linear.x = 0
-#                 msg.cmd_vel.angular.z = 0.25
-#         print(player.getPosition())
-#         print(heading, distance)
-#         player.getPublisher().publish(msg)
-
 
 def _run(subsumption_controller):
     try:
@@ -202,31 +137,34 @@ if __name__ == "__main__":
     rospy.init_node("grsim_pria", anonymous=False)
     rospy.Subscriber("/vision", SSL_DetectionFrame, vision_callback)
     r = rospy.Rate(10)
-    #
-    # bh = GoToTheball(player0, ball_position)
-    # bh.action()
-    # go_to_ball(player0)
-    # b0 = StopAllAction(player0)
-    # b1 = StayInField(player0)
-    # b2 = GoToTheball(player0, ball_position)
-    # b3 = PassTheball(player0)
-    #
-    # bArray = [b3, b2, b1, b0]
-    # bArray = [GoToTheball(player0, ball_position), StayInField(player0)]
-    # arby = Arbitrator(bArray, True)
-    # arby.go()
 
 
 
-    subsumption_controller_player0.behaviors = [StayInFieldV2(player0), PassTheballV2(player0, ball_position),ShootBallV2(player0, ball_position,POSITION_GOAL,all_players,player_my_team),
-                                                GoToTheGoalV2(player0, ball_position,POSITION_GOAL,all_players,player_my_team), LeftSideAttackV2(player0, ball_position,all_players,player_my_team),GoToTheBallV2(player0, ball_position,all_players,player_my_team)]
-    #subsumption_controller_player1.behaviors = [StayInFieldV2(player1), GoToTheballV2(player1, ball_position,all_players,player_my_team)]
-    subsumption_controller_player2.behaviors = [StayInFieldV2(player2), PassTheballV2(player2, ball_position),ShootBallV2(player2, ball_position,POSITION_GOAL,all_players,player_my_team),
-                                                GoToTheGoalV2(player2, ball_position,POSITION_GOAL,all_players,player_my_team), RightSideAttackV2(player2, ball_position,all_players,player_my_team),GoToTheBallV2(player2, ball_position,all_players,player_my_team)]
-    subsumption_controller_player3.behaviors = [StayInFieldV2(player3),ShootBallV2(player3, ball_position,POSITION_GOAL,all_players,player_my_team),GoToTheGoalV2(player3, ball_position,POSITION_GOAL,all_players,player_my_team), GoToTheBallV2(player3, ball_position,all_players,player_my_team)]
-    controller_list = [
-        subsumption_controller_player0,subsumption_controller_player2,
-        subsumption_controller_player3]
+    subsumption_controller_player2.behaviors = [StayInFieldV2(player2), 
+                                                # PassTheballV2(player0, ball_position),
+                                                ShootBallV2(player2, ball_position,POSITION_GOAL,all_players,player_my_team),
+                                                GoToTheGoalV2(player2, ball_position,POSITION_GOAL,all_players,player_my_team),
+                                                ReturnPositionInitialV2(player2, ball_position,all_players,player_my_team),
+                                                GoToTheBallV2(player2, ball_position,all_players,player_my_team),
+                                                RightSideAttackV2(player2, ball_position,all_players,player_my_team)]
+    subsumption_controller_player1.behaviors = [StayInFieldV2(player1),
+                                                GoToTheGoalV2(player1, ball_position,POSITION_GOAL,all_players,player_my_team),
+                                                ReturnPositionInitialV2(player1, ball_position,all_players,player_my_team),
+                                                GoToTheBallV2(player1, ball_position,all_players,player_my_team),
+                                                ]
+    subsumption_controller_player0.behaviors = [StayInFieldV2(player0),
+                                                # PassTheballV2(player2, ball_position),
+                                                ShootBallV2(player0, ball_position,POSITION_GOAL,all_players,player_my_team),
+                                                GoToTheGoalV2(player0, ball_position,POSITION_GOAL,all_players,player_my_team),
+                                                ReturnPositionInitialV2(player0, ball_position,all_players,player_my_team),
+                                                GoToTheBallV2(player0, ball_position,all_players,player_my_team), 
+                                                LeftSideAttackV2(player0, ball_position,all_players,player_my_team)]
+    subsumption_controller_player3.behaviors = [StayInFieldV2(player3),
+                                                ShootBallV2(player3, ball_position,POSITION_GOAL,all_players,player_my_team),
+                                                GoToTheGoalV2(player3, ball_position,POSITION_GOAL,all_players,player_my_team),
+                                                ReturnPositionInitialV2(player2, ball_position,all_players,player_my_team),
+                                                GoToTheBallV2(player3, ball_position,all_players,player_my_team)]
+    controller_list = [subsumption_controller_player0,subsumption_controller_player1,subsumption_controller_player2, subsumption_controller_player3]
     run(controller_list)
     print("Frun")
 

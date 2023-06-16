@@ -13,7 +13,7 @@ pend = lambda a,b: math.atan2((a['y']-b['y']),(a['x']-b['x']))
 
 class Player:
 
-    def __init__(self, team, id, publisher):
+    def __init__(self, team, id, publisher,position_initial):
         self.team = team
         self.position = {'x': 0, 'y': 0}
         self.angle = 0
@@ -22,10 +22,14 @@ class Player:
         self.ball_possession = False
         self.active = False
         self.topic = None
+        self.position_initial = position_initial
 
 
     def getPosition(self):
         return self.position
+    
+    def getPositionInitial(self):
+        return self.position_initial
     
     def getAngle(self):
         return self.angle
@@ -50,6 +54,11 @@ class Player:
     def setPosition(self,x,y):
         self.position['x'] = x
         self.position['y'] = y
+
+
+    def setPositionInitial(self,x,y):
+        self.position_initial['x'] = x
+        self.position_initial['y'] = y
     
     def setAngle(self, angle):
         self.angle = angle

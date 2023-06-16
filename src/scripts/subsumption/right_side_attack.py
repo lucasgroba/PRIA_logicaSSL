@@ -28,21 +28,21 @@ class RightSideAttackV2(Behavior):
 
         r = rospy.Rate(10)
         msg = SSL()
-        goal_angle = pend(self.position_max, self.player.getPosition())
+        goal_angle = pend(position_max, self.player.getPosition())
         heading = abs(goal_angle - self.player.getAngle())
-        distance = dist(self.position_max, self.player.getPosition())
+        distance = dist(position_max, self.player.getPosition())
         
 
-        if (distance < 105):
+        if (distance < 120):
             msg.cmd_vel.linear.x = 0
             msg.cmd_vel.angular.z = 0
         else:
-            if (heading < 0.2):
+            if (heading < 0.4):
                 msg.cmd_vel.linear.x = 0.75
                 msg.cmd_vel.angular.z = 0
             else:
                 msg.cmd_vel.linear.x = 0
-                msg.cmd_vel.angular.z = 1
+                msg.cmd_vel.angular.z = 0.5
 
             try:
                 self.player.getPublisher().publish(msg)
@@ -57,14 +57,8 @@ class RightSideAttackV2(Behavior):
         self.suppressed = True
 
     def check(self):
-            print('right condition:',not utils.they_have_the_ball(self.all_players,self.ball_position,110))
-            if not utils.they_have_the_ball(self.all_players,self.ball_position,110):
-                player_have_ball, distance_to_ball = utils.get_active_player(self.players_my_team,self.ball_position)
-                print('check right_side_attack:', player_have_ball.getId(),self.player.getId(), distance_to_ball)
-                if(player_have_ball != None and player_have_ball.getId() != self.player.getId() and self.player.getId() == 2 ):
-                    #si uno de mis companeros tiene la peota y no soy yo y soy el jugador 2
-                    return True
-                else:
-                    return False
+            print('right condition:',not utils.they_have_the_ball(self.all_players,self.ball_position,130))
+            if not utils.they_have_the_ball(self.all_players,self.ball_position,130):
+                return True
             else:
                 False

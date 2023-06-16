@@ -32,11 +32,11 @@ class GoToTheBallV2(Behavior):
         distance = dist(self.ball_position, self.player.getPosition())
         #print('action GoToTheball--', goal_angle)
 
-        if (distance < 105):
+        if (distance < 110):
             msg.cmd_vel.linear.x = 0
             msg.cmd_vel.angular.z = 0
         else:
-            if (heading < 0.2):
+            if (heading < 0.4):
                 msg.cmd_vel.linear.x = 0.75
                 msg.cmd_vel.angular.z = 0
             else:
