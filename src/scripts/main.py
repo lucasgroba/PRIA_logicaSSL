@@ -20,6 +20,10 @@ from subsumption.go_to_the_goal import GoToTheGoalV2
 from subsumption.left_side_attack import LeftSideAttackV2
 from subsumption.right_side_attack import RightSideAttackV2
 from subsumption.return_position_initial import ReturnPositionInitialV2
+from subsumption.keeper_moving import KeeperMovingV2
+from subsumption.keeper_out_of_place import KeeperMovingToPlaceV2
+from subsumption.facing_field import FaceFieldV2
+from subsumption.facing_front import FaceFrontV2
 import math
 import utils
 import player
@@ -45,6 +49,7 @@ subsumption_controller_player0 = Controller(False)
 subsumption_controller_player1 = Controller(False)
 subsumption_controller_player2 = Controller(False)
 subsumption_controller_player3 = Controller(False)
+subsumption_controller_player_rival0 = Controller(False)
 
 rival0 = player.Player('yellow', '0',rospy.Publisher("/robot_yellow_"+'0'+"/cmd", SSL, queue_size=10),{'x': 2000, 'y': 0})
 rival1 = player.Player('yellow', '1',rospy.Publisher("/robot_yellow_"+'1'+"/cmd", SSL, queue_size=10),{'x': 2000, 'y': 0})
@@ -164,7 +169,11 @@ if __name__ == "__main__":
                                                 GoToTheGoalV2(player3, ball_position,POSITION_GOAL,all_players,player_my_team),
                                                 ReturnPositionInitialV2(player2, ball_position,all_players,player_my_team),
                                                 GoToTheBallV2(player3, ball_position,all_players,player_my_team)]
-    controller_list = [subsumption_controller_player0,subsumption_controller_player1,subsumption_controller_player2, subsumption_controller_player3]
+    subsumption_controller_player_rival0.behaviors = [StayInFieldV2(rival0),FaceFrontV2(rival0),
+                                                      KeeperMovingToPlaceV2(rival0),KeeperMovingV2(rival0)]
+
+    controller_list = [subsumption_controller_player0,subsumption_controller_player1,subsumption_controller_player2,
+                       subsumption_controller_player3,subsumption_controller_player_rival0]
     run(controller_list)
     print("Frun")
 
